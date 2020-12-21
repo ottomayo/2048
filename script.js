@@ -56,23 +56,11 @@ game.goLeft = function() {
     })
 }
 
-function keyDownHandler(e) {
-    if(e.key == 'ArrowLeft') { 
-        console.log('left'); 
-        game.goLeft(); 
-    }
-    if(e.key == 'ArrowRight') { 
-        console.log('right'); 
-        game.goLeft(); 
-    }
-    if(e.key == 'ArrowUp') { 
-        console.log('up'); 
-        game.goLeft(); 
-    }
-    if(e.key == 'ArrowDown') { 
-        console.log('down'); 
-        game.goLeft(); 
-    }
+function drawTile(x, y, colour) {
+    ctx.beginPath();
+    ctx.fillStyle = colour;
+    ctx.roundRect(x, y, game.tileWidth, game.tileWidth, 5).fill();
+    ctx.closePath(); 
 }
 
 function drawBoard() {
@@ -95,18 +83,48 @@ function drawBoard() {
             x_val = (game.tileWidth * row_num) + (game.gapWidth * (row_num + 1));
             y_val = (game.tileWidth * col_num) + (game.gapWidth * (col_num + 1));
 
-            ctx.beginPath();
-            ctx.fillStyle = game.colours.lightBrown;
-            ctx.roundRect(x_val, y_val, game.tileWidth, game.tileWidth, 5).fill();
-            ctx.closePath();             
+            drawTile(x_val, y_val, game.colours.lightBrown);          
         })
     })
 
 }
 
-function mainLoop() {
+function keyDownHandler(e) {
     drawBoard();
+
+    if(e.key == 'ArrowLeft') { 
+        console.log('left'); 
+        game.goLeft(); 
+    }
+    if(e.key == 'ArrowRight') { 
+        console.log('right'); 
+        game.goLeft(); 
+    }
+    if(e.key == 'ArrowUp') { 
+        console.log('up'); 
+        game.goLeft(); 
+    }
+    if(e.key == 'ArrowDown') { 
+        console.log('down'); 
+        game.goLeft(); 
+    }
 }
 
+function drawTiles() {
+    let x_val;
+    let y_val;
+
+    game.board.forEach(function(row, row_num) {
+        row.forEach(function(tile, col_num) {
+            x_val = (game.tileWidth * row_num) + (game.gapWidth * (row_num + 1));
+            y_val = (game.tileWidth * col_num) + (game.gapWidth * (col_num + 1));
+
+            drawTile(x_val, y_val, white);            
+        })
+    })
+}
+
+drawBoard();
+
 document.addEventListener("keydown", keyDownHandler);
-setInterval(mainLoop, 12);
+// setInterval(mainLoop, 12);
