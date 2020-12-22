@@ -12,7 +12,15 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
     this.arcTo(x,   y,   x+w, y,   r);
     this.closePath();
     return this;
-  }
+}
+
+function write(text, colour, font, x, y) {
+    ctx.font = font;
+    ctx.fillStyle = colour;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(text, x, y);
+}
 
 canvas.width = 600;
 canvas.height = 600;
@@ -56,11 +64,34 @@ game.goLeft = function() {
     })
 }
 
-function drawTile(x, y, colour) {
+game.newTile = function() {
+    let availableSquares = [];
+    game.board.forEach(function(row, row_num) {
+        row.forEach(function(square, col_num) {
+            if(square === 0) {
+                availableSquares.push([row_num, col_num]);
+            }
+        })
+    })
+
+    let selectedSquare = availableSquares[Math.floor(Math.random() * availableSquares.length)];
+    let new_num = 2;
+    if(Math.random() <= 0.1) { new_num = 4; }
+
+    console.log(selectedSquare);
+
+    game.board[selectedSquare[0]][selectedSquare[1]] = new_num;
+    console.log(game.board);
+}
+
+function drawTile(x, y, colour, text) {
     ctx.beginPath();
     ctx.fillStyle = colour;
     ctx.roundRect(x, y, game.tileWidth, game.tileWidth, 5).fill();
-    ctx.closePath(); 
+    ctx.closePath();
+
+    ctx.beginPath();
+    write(text, 'black', '60px Arial', x+65, y+40);
 }
 
 function drawBoard() {
@@ -83,7 +114,7 @@ function drawBoard() {
             x_val = (game.tileWidth * row_num) + (game.gapWidth * (row_num + 1));
             y_val = (game.tileWidth * col_num) + (game.gapWidth * (col_num + 1));
 
-            drawTile(x_val, y_val, game.colours.lightBrown);          
+            drawTile(x_val, y_val, game.colours.lightBrown, '');          
         })
     })
 
@@ -108,6 +139,10 @@ function keyDownHandler(e) {
         console.log('down'); 
         game.goLeft(); 
     }
+
+    if(e.key == 'n') {
+        game.newTile();
+    }
 }
 
 function drawTiles() {
@@ -119,12 +154,19 @@ function drawTiles() {
             x_val = (game.tileWidth * row_num) + (game.gapWidth * (row_num + 1));
             y_val = (game.tileWidth * col_num) + (game.gapWidth * (col_num + 1));
 
-            drawTile(x_val, y_val, white);            
+            if(game.board[row_num][col_num] !== 0) {
+                drawTile(x_val, y_val, 'white', game.board[row_num][col_num]);
+            }
         })
     })
 }
 
-drawBoard();
+game.newTile();
+
+function updateScreen() {
+    drawBoard();
+    drawTiles();
+}
 
 document.addEventListener("keydown", keyDownHandler);
-// setInterval(mainLoop, 12);
+setInterval(updateScreen, 12);
